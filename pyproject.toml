@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gg-forge-kit"
-version = "0.3.1"
+version = "0.4.0"
 description = "Utilidades compartidas por los bots de Discord de GG Forge."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -18,6 +18,9 @@ ia = [
     "anthropic>=1.8,<2.0",
     "google-genai>=2.0,<3.0",
     "openai>=3.0,<4.0",
+]
+github = [
+    "PyJWT[crypto]>=2.8,<3.0",
 ]
 dev = [
     "pytest>=9.0,<10.0",
