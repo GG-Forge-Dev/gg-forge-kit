@@ -108,3 +108,27 @@ def test_from_env_order_and_openai_needs_model(monkeypatch):
     monkeypatch.setenv("IA_MODELO_OPENAI", "modelo-x")
     monkeypatch.setenv("IA_ORDEN", "openai,claude")
     assert ClienteIA.desde_env().cadena == "openai (modelo-x) → claude (claude-opus-5)"
+
+
+def test_sdks_load_on_first_use_not_at_startup(monkeypatch):
+    """Crear la cadena no importa ningún SDK: ocupan ~50 MB y el de respaldo puede no usarse nunca."""
+    import builtins
+
+    real_import, imported = builtins.__import__, []
+
+    def spy(name, *args, **kwargs):
+        if name.split(".")[0] in ("anthropic", "google", "openai"):
+            imported.append(name)
+        return real_import(name, *args, **kwargs)
+
+    for var in ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY", "IA_MODELO_OPENAI", "IA_ORDEN"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "a")
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.setenv("OPENAI_API_KEY", "o")
+    monkeypatch.setenv("IA_MODELO_OPENAI", "modelo-x")
+    monkeypatch.setattr(builtins, "__import__", spy)
+    cliente = ClienteIA.desde_env()
+    assert len(cliente.proveedores) == 3 and imported == []
+    fake = object()
+    assert ClaudeProveedor("k", client=fake).client is fake

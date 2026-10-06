@@ -5,8 +5,9 @@ en orden y se devuelve la primera respuesta válida. Cualquier fallo (HTTP, time
 rechazo) pasa al siguiente. No se reintenta dentro de un mismo proveedor (el SDK de cada uno ya
 reintenta errores transitorios), para no multiplicar reintentos por proveedores.
 
-Solo se usan los proveedores con API key en el entorno. Instalar con `gg-forge-kit[ia]`; los SDK se
-importan al crear cada proveedor, así los bots sin IA no los necesitan.
+Solo se usan los proveedores con API key en el entorno. Instalar con `gg-forge-kit[ia]`. Cada SDK se
+importa la primera vez que su proveedor responde, no al arrancar: juntos ocupan ~50 MB de RAM, y el de
+un proveedor de respaldo no llega a cargarse mientras el primero funcione.
 
 Variables de entorno:
     ANTHROPIC_API_KEY   · IA_MODELO_CLAUDE  (por defecto claude-opus-5)
@@ -76,12 +77,17 @@ class ClaudeProveedor:
     nombre = "claude"
 
     def __init__(self, api_key: str, modelo: str = DEFAULT_CLAUDE_MODEL, *, client: Any = None) -> None:
-        if client is None:
+        self._api_key = api_key
+        self._client = client
+        self.modelo = modelo
+
+    @property
+    def client(self) -> Any:
+        if self._client is None:
             import anthropic
 
-            client = anthropic.AsyncAnthropic(api_key=api_key, timeout=DEFAULT_TIMEOUT, max_retries=1)
-        self.client = client
-        self.modelo = modelo
+            self._client = anthropic.AsyncAnthropic(api_key=self._api_key, timeout=DEFAULT_TIMEOUT, max_retries=1)
+        return self._client
 
     async def completar(self, sistema: str, mensaje: str, max_tokens: int) -> Respuesta:
         response = await self.client.beta.messages.create(
@@ -107,12 +113,17 @@ class GeminiProveedor:
     nombre = "gemini"
 
     def __init__(self, api_key: str, modelo: str = DEFAULT_GEMINI_MODEL, *, client: Any = None) -> None:
-        if client is None:
+        self._api_key = api_key
+        self._client = client
+        self.modelo = modelo
+
+    @property
+    def client(self) -> Any:
+        if self._client is None:
             from google import genai
 
-            client = genai.Client(api_key=api_key)
-        self.client = client
-        self.modelo = modelo
+            self._client = genai.Client(api_key=self._api_key)
+        return self._client
 
     async def completar(self, sistema: str, mensaje: str, max_tokens: int) -> Respuesta:
         from google.genai import types
@@ -134,12 +145,17 @@ class OpenAIProveedor:
     nombre = "openai"
 
     def __init__(self, api_key: str, modelo: str, *, client: Any = None) -> None:
-        if client is None:
+        self._api_key = api_key
+        self._client = client
+        self.modelo = modelo
+
+    @property
+    def client(self) -> Any:
+        if self._client is None:
             import openai
 
-            client = openai.AsyncOpenAI(api_key=api_key, timeout=DEFAULT_TIMEOUT, max_retries=1)
-        self.client = client
-        self.modelo = modelo
+            self._client = openai.AsyncOpenAI(api_key=self._api_key, timeout=DEFAULT_TIMEOUT, max_retries=1)
+        return self._client
 
     async def completar(self, sistema: str, mensaje: str, max_tokens: int) -> Respuesta:
         response = await self.client.responses.create(
