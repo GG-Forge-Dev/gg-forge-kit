@@ -10,7 +10,7 @@ importa la primera vez que su proveedor responde, no al arrancar: juntos ocupan 
 un proveedor de respaldo no llega a cargarse mientras el primero funcione.
 
 Variables de entorno:
-    ANTHROPIC_API_KEY   · IA_MODELO_CLAUDE  (por defecto claude-opus-5)
+    ANTHROPIC_API_KEY   · IA_MODELO_CLAUDE  (por defecto claude-opus-5-5)
     GEMINI_API_KEY      · IA_MODELO_GEMINI  (por defecto gemini-3.6-flash)
     OPENAI_API_KEY      · IA_MODELO_OPENAI  (obligatorio para usar OpenAI)
     IA_ORDEN            (por defecto «claude,gemini,openai»)
@@ -27,7 +27,8 @@ from gg_forge_kit.config import optional_env
 
 log = logging.getLogger(__name__)
 
-DEFAULT_CLAUDE_MODEL = "claude-opus-5"
+# Opus 5.5: más barato que Opus 5 ($4/$20 frente a $5/$25 por millón de tokens) y con la misma llamada.
+DEFAULT_CLAUDE_MODEL = "claude-opus-5-5"
 DEFAULT_GEMINI_MODEL = "gemini-3.6-flash"
 DEFAULT_ORDER = ("claude", "gemini", "openai")
 DEFAULT_MAX_TOKENS = 16000  # con el pensamiento adaptativo de Claude, quedarse corto trunca la respuesta

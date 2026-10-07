@@ -37,7 +37,7 @@ pip install -e ../gg-forge-kit
 | `ALERTAS_DESTINATARIOS` | alerts | Correos separados por comas. Sin dominio propio verificado, solo el Gmail con el que se registró la cuenta de Resend |
 | `ALERTAS_REMITENTE` | alerts | Opcional. Por defecto `GG Forge Alertas <onboarding@resend.dev>` |
 
-| `ANTHROPIC_API_KEY`, `IA_MODELO_CLAUDE` | ia | Claude (modelo por defecto `claude-opus-5`) |
+| `ANTHROPIC_API_KEY`, `IA_MODELO_CLAUDE` | ia | Claude (modelo por defecto `claude-opus-5-5`) |
 | `GEMINI_API_KEY`, `IA_MODELO_GEMINI` | ia | Respaldo 1 (por defecto `gemini-3.6-flash`) |
 | `OPENAI_API_KEY`, `IA_MODELO_OPENAI` | ia | Respaldo 2 (el modelo es obligatorio) |
 | `IA_ORDEN` | ia | Orden de la cadena (por defecto `claude,gemini,openai`) |

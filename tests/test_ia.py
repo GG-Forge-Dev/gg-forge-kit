@@ -25,7 +25,7 @@ class FakeAnthropic:
 
 def claude_response(text="hola", stop="end_turn", category=None):
     content = [SimpleNamespace(type="thinking", thinking=""), SimpleNamespace(type="text", text=text)]
-    return SimpleNamespace(content=content, stop_reason=stop, model="claude-opus-5",
+    return SimpleNamespace(content=content, stop_reason=stop, model="claude-opus-5-5",
                            stop_details=SimpleNamespace(category=category) if category else None,
                            usage=SimpleNamespace(input_tokens=10, output_tokens=5))
 
@@ -33,9 +33,9 @@ def claude_response(text="hola", stop="end_turn", category=None):
 async def test_claude_request_shape_and_text_extraction():
     fake = FakeAnthropic(claude_response("Respuesta"))
     r = await ClaudeProveedor("k", client=fake).completar("sistema", "pregunta", 16000)
-    assert r == Respuesta("Respuesta", "claude", "claude-opus-5", 10, 5)
+    assert r == Respuesta("Respuesta", "claude", "claude-opus-5-5", 10, 5)
     call = fake.calls[0]
-    assert call["model"] == "claude-opus-5" and call["system"] == "sistema"
+    assert call["model"] == "claude-opus-5-5" and call["system"] == "sistema"
     assert call["fallbacks"] == "default" and call["betas"] == [CLAUDE_FALLBACK_BETA]
     assert call["messages"] == [{"role": "user", "content": "pregunta"}]
     assert "thinking" not in call  # Opus 5: adaptativo por defecto
@@ -107,7 +107,7 @@ def test_from_env_order_and_openai_needs_model(monkeypatch):
     assert [p.nombre for p in ClienteIA.desde_env().proveedores] == ["claude", "gemini"]
     monkeypatch.setenv("IA_MODELO_OPENAI", "modelo-x")
     monkeypatch.setenv("IA_ORDEN", "openai,claude")
-    assert ClienteIA.desde_env().cadena == "openai (modelo-x) → claude (claude-opus-5)"
+    assert ClienteIA.desde_env().cadena == "openai (modelo-x) → claude (claude-opus-5-5)"
 
 
 def test_sdks_load_on_first_use_not_at_startup(monkeypatch):
