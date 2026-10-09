@@ -40,6 +40,13 @@ async def test_claude_request_shape_and_text_extraction():
     assert call["messages"] == [{"role": "user", "content": "pregunta"}]
     assert "thinking" not in call  # Opus 5: adaptativo por defecto
 
+async def test_haiku_goes_without_server_fallback():
+    fake = FakeAnthropic(claude_response("Respuesta"))
+    await ClaudeProveedor("k", "claude-haiku-5-5", client=fake).completar("s", "m", 16000)
+    assert fake.calls[0]["model"] == "claude-haiku-5-5"
+    assert "fallbacks" not in fake.calls[0] and "betas" not in fake.calls[0]
+
+
 
 async def test_claude_refusal_and_empty_are_failures():
     with pytest.raises(ProveedorError, match="rechazo"):

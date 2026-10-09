@@ -9,7 +9,7 @@ Utilidades compartidas por los bots de Discord de GG Forge. Diseño y hoja de ru
 | `gg_forge_kit.logs` | `setup_logging()` al arrancar |
 | `gg_forge_kit.heartbeat` | `Heartbeat(url, is_healthy=...)` → `.start()` hace ping cada 10 min; `.fail(motivo)` |
 | `gg_forge_kit.alerts` | `EmailAlerter.from_env(bot_name=...)` → `await .send(asunto, cuerpo)` |
-| `gg_forge_kit.ia` | `ClienteIA.desde_env()` → `await .completar(sistema, mensaje)`: Claude primero (con `fallbacks="default"` ante rechazos), luego Gemini, luego OpenAI. Requiere el extra `[ia]` |
+| `gg_forge_kit.ia` | `ClienteIA.desde_env()` → `await .completar(sistema, mensaje)`: Claude primero (con `fallbacks="default"` ante rechazos, salvo con Haiku, que no lo admite), luego Gemini, luego OpenAI. Requiere el extra `[ia]` |
 | `gg_forge_kit.github` | `GitHubAuth.from_env(repositories=[...], permissions={...})` → `await .token()` / `await .headers()`: token de la GitHub App (1 h, se renueva solo, limitado a esos repos y permisos) o, si no hay App, `GITHUB_TOKEN`. Requiere el extra `[github]` |
 | `gg_forge_kit.validation` | Validar JSON de config: `check_keys` (clave desconocida → error con sugerencia; `_x` = comentario), `discord_id(s)`, `choice`, `positive_int`, `positive_number`, `string_list`, `ConfigError` |
 

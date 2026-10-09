@@ -70,7 +70,7 @@ class Proveedor(Protocol):
 class ClaudeProveedor:
     """Claude vía el SDK oficial de Anthropic.
 
-    Usa `fallbacks="default"`: si los clasificadores de seguridad del modelo rechazan la petición,
+    Usa `fallbacks="default"` (salvo con Haiku, que no tiene respaldo en el servidor): si los clasificadores de seguridad del modelo rechazan la petición,
     la API la repite en otro modelo de Anthropic dentro de la misma llamada. Si aun así termina en
     rechazo, se trata como fallo y se pasa al siguiente proveedor.
     """
@@ -91,13 +91,14 @@ class ClaudeProveedor:
         return self._client
 
     async def completar(self, sistema: str, mensaje: str, max_tokens: int) -> Respuesta:
+        # Haiku no tiene respaldo en el servidor: con él, `fallbacks` no repite nada (y en lista da 400).
+        respaldo = {} if "haiku" in self.modelo else {"betas": [CLAUDE_FALLBACK_BETA], "fallbacks": "default"}
         response = await self.client.beta.messages.create(
             model=self.modelo,
             max_tokens=max_tokens,
             system=sistema,
             messages=[{"role": "user", "content": mensaje}],
-            betas=[CLAUDE_FALLBACK_BETA],
-            fallbacks="default",
+            **respaldo,
         )
         if response.stop_reason == "refusal":
             categoria = getattr(getattr(response, "stop_details", None), "category", None)
