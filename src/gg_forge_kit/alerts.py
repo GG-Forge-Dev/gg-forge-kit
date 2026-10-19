@@ -11,7 +11,9 @@ from gg_forge_kit.config import optional_env
 log = logging.getLogger(__name__)
 
 RESEND_URL = "https://api.resend.com/emails"
-DEFAULT_SENDER = "GG Forge Alertas <onboarding@resend.dev>"
+# Dominio verificado en Resend (2026-10-19). La dirección de pruebas onboarding@resend.dev solo entregaba
+# al dueño de la cuenta de Resend.
+DEFAULT_SENDER = "GG Forge Alertas <alertas@gg-forge.com>"
 DEFAULT_MAX_PER_HOUR = 20
 
 
