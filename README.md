@@ -35,7 +35,7 @@ pip install -e ../gg-forge-kit
 |---|---|---|
 | `RESEND_API_KEY` | alerts | API key de [Resend](https://resend.com). Sin ella, no se envían correos |
 | `ALERTAS_DESTINATARIOS` | alerts | Correos separados por comas. Sin dominio propio verificado, solo el Gmail con el que se registró la cuenta de Resend |
-| `ALERTAS_REMITENTE` | alerts | Opcional. Por defecto `GG Forge Alertas <alertas@gg-forge.com>` (dominio verificado en Resend) |
+| `ALERTAS_REMITENTE` | alerts | Opcional. Por defecto `GG Forge Alerts <alerts@gg-forge.com>` (dominio verificado en Resend) |
 
 | `ANTHROPIC_API_KEY`, `IA_MODELO_CLAUDE` | ia | Claude (modelo por defecto `claude-opus-5-5`) |
 | `GEMINI_API_KEY`, `IA_MODELO_GEMINI` | ia | Respaldo 1 (por defecto `gemini-3.6-flash`) |
