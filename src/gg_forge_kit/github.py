@@ -46,6 +46,11 @@ async def _request(method: str, url: str, headers: dict[str, str], body: Any = N
                 return resp.status, text
 
 
+def _api_headers(bearer: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {bearer}", "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"}
+
+
 def normalize_private_key(raw: str) -> str:
     """Acepta el .pem tal cual, con los saltos de línea escritos como «\\n» (variables de una sola línea) o
     en base64."""
@@ -122,8 +127,7 @@ class GitHubAuth:
             return self._token
 
     async def headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {await self.token()}", "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28"}
+        return _api_headers(await self.token())
 
     # ─── Internos ─────────────────────────────────────────────────────────────
 
@@ -135,8 +139,7 @@ class GitHubAuth:
         return jwt.encode({"iat": now - 60, "exp": now + 9 * 60, "iss": str(self.app_id)}, self._key, algorithm="RS256")
 
     def _app_headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {self._jwt()}", "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28"}
+        return _api_headers(self._jwt())
 
     async def _find_installation(self) -> str:
         status, body = await self._request("GET", f"{API}/orgs/{self.owner}/installation", self._app_headers(), None)
