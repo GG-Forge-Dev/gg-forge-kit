@@ -142,9 +142,10 @@ class GitHubAuth:
         return _api_headers(self._jwt())
 
     async def _find_installation(self) -> str:
-        status, body = await self._request("GET", f"{API}/orgs/{self.owner}/installation", self._app_headers(), None)
+        headers = self._app_headers()
+        status, body = await self._request("GET", f"{API}/orgs/{self.owner}/installation", headers, None)
         if status == 404:  # no es una organización: puede ser una cuenta personal
-            status, body = await self._request("GET", f"{API}/users/{self.owner}/installation", self._app_headers(), None)
+            status, body = await self._request("GET", f"{API}/users/{self.owner}/installation", headers, None)
         if status >= 400 or not isinstance(body, dict) or "id" not in body:
             raise GitHubAuthError(f"La GitHub App no está instalada en {self.owner} ({status})")
         return str(body["id"])
